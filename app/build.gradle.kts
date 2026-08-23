@@ -11,8 +11,8 @@ android {
         applicationId = "com.soueast.s07code"
         minSdk = 26
         targetSdk = 34
-        versionCode = 7
-        versionName = "1.6"
+        versionCode = 6
+        versionName = "1.7"
     }
 
     signingConfigs {

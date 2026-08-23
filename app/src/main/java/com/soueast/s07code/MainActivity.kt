@@ -461,60 +461,76 @@ fun UpdateDialog(
         confirmButton = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    OutlinedButton(
+                    Button(
                         onClick = onDontAskAgain,
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(12.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = Color(0xFF78909C)
-                        )
+                        modifier = Modifier.weight(1f).height(44.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFECEFF1),
+                            contentColor = Color(0xFF546E7A)
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 3.dp,
+                            pressedElevation = 1.dp
+                        ),
+                        contentPadding = PaddingValues(0.dp)
                     ) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                "Больше не спрашивать",
-                                fontSize = 11.sp
-                            )
-                        }
+                        Text(
+                            "Больше не спрашивать",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1
+                        )
                     }
-                    OutlinedButton(
+                    Button(
                         onClick = onDismiss,
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(12.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = Color(0xFF78909C)
-                        )
+                        modifier = Modifier.weight(1f).height(44.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFECEFF1),
+                            contentColor = Color(0xFF546E7A)
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 3.dp,
+                            pressedElevation = 1.dp
+                        ),
+                        contentPadding = PaddingValues(0.dp)
                     ) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                "Позже",
-                                fontSize = 12.sp
-                            )
-                        }
+                        Text(
+                            "Позже",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
                 Button(
                     onClick = onConfirm,
                     enabled = !isDownloading,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = GreenCode
-                    )
+                        containerColor = GreenCode,
+                        contentColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 4.dp,
+                        pressedElevation = 2.dp
+                    ),
+                    contentPadding = PaddingValues(0.dp)
                 ) {
                     Text(
                         if (isDownloading) "Загрузка..." else "Установить",
-                        color = Color.White
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
