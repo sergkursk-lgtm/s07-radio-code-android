@@ -134,9 +134,9 @@ fun S07CodeScreen() {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
-    val titleFontSize = if (isLandscape) 18.sp else 22.sp
-    val codeFontSize = if (isLandscape) 36.sp else 48.sp
-    val timerFontSize = if (isLandscape) 22.sp else 28.sp
+    val titleFontSize = if (isLandscape) 20.sp else 24.sp
+    val codeFontSize = if (isLandscape) 40.sp else 52.sp
+    val timerFontSize = if (isLandscape) 24.sp else 30.sp
     val horizontalPadding = if (isLandscape) 16.dp else 20.dp
     val cardPadding = if (isLandscape) 16.dp else 28.dp
 
@@ -165,19 +165,19 @@ fun S07CodeScreen() {
                         modifier = Modifier.padding(cardPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = "Код Soueast S07 awd",
-                            fontSize = titleFontSize,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1A237E)
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "КОД ДЛЯ ГУ",
-                            fontSize = 11.sp,
-                            color = Color(0xFF78909C),
-                            letterSpacing = 1.sp
-                        )
+Text(
+                                text = "Код Soueast S07 awd",
+                                fontSize = titleFontSize,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF1A237E)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "КОД ДЛЯ ГУ",
+                                fontSize = 14.sp,  // was 11.sp
+                                color = Color(0xFF78909C),
+                                letterSpacing = 1.sp
+                            )
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Card(
@@ -222,7 +222,7 @@ fun S07CodeScreen() {
                             ) {
                                 Text(
                                     text = "КОДУ ОСТАЛОСЬ ЖИТЬ",
-                                    fontSize = 10.sp,
+                                    fontSize = 12.sp,
                                     color = Color(0xFF78909C),
                                     letterSpacing = 1.sp
                                 )
@@ -407,7 +407,7 @@ fun InstructionStep(number: String, text: String) {
         ) {
             Text(
                 text = number,
-                fontSize = 11.sp,
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = GreenCode
             )
@@ -415,9 +415,9 @@ fun InstructionStep(number: String, text: String) {
         Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = text,
-            fontSize = 13.sp,
+            fontSize = 15.sp,
             color = Color(0xFF37474F),
-            lineHeight = 18.sp
+            lineHeight = 20.sp
         )
     }
 }
@@ -445,16 +445,16 @@ fun UpdateDialog(
             Column {
                 Text(
                     text = "Версия ${release.versionName}",
-                    fontSize = 16.sp,
+                    fontSize = 20.sp,  // was 16.sp
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFF37474F)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = release.releaseNotes,
-                    fontSize = 14.sp,
+                    fontSize = 18.sp,  // was 14.sp
                     color = Color(0xFF546E7A),
-                    lineHeight = 22.sp
+                    lineHeight = 24.sp
                 )
             }
         },
@@ -483,7 +483,7 @@ fun UpdateDialog(
                     ) {
                         Text(
                             "Больше не спрашивать",
-                            fontSize = 11.sp,
+                            fontSize = 13.sp,
                             fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center,
                             maxLines = 1
@@ -505,7 +505,7 @@ fun UpdateDialog(
                     ) {
                         Text(
                             "Позже",
-                            fontSize = 12.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center
                         )
