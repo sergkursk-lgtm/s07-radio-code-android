@@ -4,7 +4,7 @@ Android-приложение для генерации кодов ГУ Soueast S
 
 ## Скачать
 
-**[Скачать soueast_adb_code_v1.5.apk](https://github.com/sergkursk-lgtm/s07-radio-code-android/releases/download/v1.5/soueast_adb_code_v1.5.apk)** (v1.5)
+**[Скачать soueast_adb_code_v1.6.apk](https://github.com/sergkursk-lgtm/s07-radio-code-android/releases/download/v1.6/soueast_adb_code_v1.6.apk)** (v1.6)
 
 ## Возможности
 
