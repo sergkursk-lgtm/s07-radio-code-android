@@ -3,21 +3,16 @@ package com.soueast.s07code
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,23 +49,14 @@ fun S07CodeScreen() {
     var currentMonth by remember { mutableIntStateOf(calendar.get(Calendar.MONTH) + 1) }
     var currentDay by remember { mutableIntStateOf(calendar.get(Calendar.DAY_OF_MONTH)) }
     var currentHour by remember { mutableIntStateOf(calendar.get(Calendar.HOUR_OF_DAY)) }
-    var currentYear by remember { mutableIntStateOf(calendar.get(Calendar.YEAR)) }
     var secondsLeft by remember { mutableIntStateOf(0) }
 
-    // Manual input state
-    var inputMonth by remember { mutableStateOf("") }
-    var inputDay by remember { mutableStateOf("") }
-    var inputHour by remember { mutableStateOf("") }
-    var manualCode by remember { mutableStateOf("") }
-
-    // Timer coroutine
     LaunchedEffect(Unit) {
         while (true) {
             val now = Calendar.getInstance()
             currentMonth = now.get(Calendar.MONTH) + 1
             currentDay = now.get(Calendar.DAY_OF_MONTH)
             currentHour = now.get(Calendar.HOUR_OF_DAY)
-            currentYear = now.get(Calendar.YEAR)
 
             val minutes = now.get(Calendar.MINUTE)
             val seconds = now.get(Calendar.SECOND)
@@ -83,14 +69,6 @@ fun S07CodeScreen() {
     val code = generateCode(currentMonth, currentDay, currentHour)
     val minutesLeft = secondsLeft / 60
     val secsLeft = secondsLeft % 60
-
-    // Reset manual code when hour changes
-    LaunchedEffect(currentHour) {
-        manualCode = ""
-        inputMonth = ""
-        inputDay = ""
-        inputHour = ""
-    }
 
     Box(
         modifier = Modifier
@@ -105,14 +83,12 @@ fun S07CodeScreen() {
                 .widthIn(max = 420.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = CardBackground),
-            border = CardDefaults.outlinedCardBorder().takeIf { false },
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Column(
                 modifier = Modifier.padding(28.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Title
                 Text(
                     text = "Код Soueast S07",
                     fontSize = 22.sp,
@@ -131,23 +107,21 @@ fun S07CodeScreen() {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // ADB Instruction block
                 InstructionBlock()
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                // Current code
                 Text(
                     text = code,
-                    fontSize = 46.sp,
+                    fontSize = 52.sp,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = 6.sp,
+                    letterSpacing = 8.sp,
                     color = GreenCode,
                     fontFamily = FontFamily.Monospace,
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = "КОДУ ОСТАЛОСЬ ЖИТЬ",
@@ -158,102 +132,12 @@ fun S07CodeScreen() {
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                // Timer
                 Text(
                     text = String.format("%02d:%02d", minutesLeft, secsLeft),
-                    fontSize = 24.sp,
+                    fontSize = 28.sp,
                     color = YellowTimer,
                     fontFamily = FontFamily.Monospace
                 )
-
-                Spacer(modifier = Modifier.height(22.dp))
-
-                // Divider
-                Divider(
-                    thickness = 1.dp,
-                    color = CardBorder
-                )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                // Manual input section
-                Text(
-                    text = "ВРУЧНУЮ: месяц, день, час (как на магнитоле)",
-                    fontSize = 13.sp,
-                    color = SubText,
-                    letterSpacing = 0.08.sp
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    CodeInput(
-                        value = inputMonth,
-                        onValueChange = { inputMonth = it },
-                        placeholder = "ММ",
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    CodeInput(
-                        value = inputDay,
-                        onValueChange = { inputDay = it },
-                        placeholder = "ДД",
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    CodeInput(
-                        value = inputHour,
-                        onValueChange = { inputHour = it },
-                        placeholder = "ЧЧ",
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Button(
-                    onClick = {
-                        val m = inputMonth.toIntOrNull()
-                        val d = inputDay.toIntOrNull()
-                        val h = inputHour.toIntOrNull()
-                        if (m != null && d != null && h != null &&
-                            m in 1..12 && d in 1..31 && h in 0..23) {
-                            manualCode = generateCode(m, d, h)
-                        } else {
-                            manualCode = "— введи ММ ДД ЧЧ —"
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ButtonGreen,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(
-                        text = "Сгенерировать",
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-
-                if (manualCode.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = manualCode,
-                        fontSize = 40.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 5.sp,
-                        color = GreenCode,
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
             }
         }
     }
@@ -305,43 +189,4 @@ fun InstructionBlock() {
             )
         }
     }
-}
-
-@Composable
-fun CodeInput(
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    modifier: Modifier = Modifier
-) {
-    TextField(
-        value = value,
-        onValueChange = { if (it.length <= 2) onValueChange(it) },
-        placeholder = {
-            Text(
-                text = placeholder,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-                color = Color(0xFF555D6B)
-            )
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        singleLine = true,
-        textStyle = LocalTextStyle.current.copy(
-            textAlign = TextAlign.Center,
-            fontSize = 18.sp,
-            color = Color.White
-        ),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = InputBg,
-            unfocusedContainerColor = InputBg,
-            focusedIndicatorColor = ButtonGreen,
-            unfocusedIndicatorColor = InputBorder,
-            cursorColor = ButtonGreen
-        ),
-        modifier = modifier
-            .height(48.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .border(1.dp, InputBorder, RoundedCornerShape(8.dp))
-    )
 }
