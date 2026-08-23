@@ -4,13 +4,12 @@ Android-приложение для генерации кодов магнито
 
 ## Скачать
 
-**[Скачать soueast_adb_code_v1.1.apk](https://github.com/sergkursk-lgtm/s07-radio-code-android/releases/download/v1.1/soueast_adb_code_v1.1.apk)** (v1.1)
+**[Скачать soueast_adb_code_v1.2.apk](https://github.com/sergkursk-lgtm/s07-radio-code-android/releases/download/v1.2/soueast_adb_code_v1.2.apk)** (v1.2)
 
 ## Возможности
 
-- Автоматическая генерация кода по дате и времени
+- Автоматическая генерация кода по текущему времени
 - Таймер обратного отсчёта до следующего часа
-- Ручной ввод (месяц, день, час)
 - Инструкция по входу в меню ADB
 
 ## Как попасть в меню ADB
