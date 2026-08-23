@@ -90,7 +90,7 @@ fun S07CodeScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Код Soueast S07",
+                    text = "Код Soueast S07 awd",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
