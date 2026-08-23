@@ -1,10 +1,10 @@
 # Код Soueast S07 awd
 
-Android-приложение для генерации кодов магнитолы Soueast S07 awd.
+Android-приложение для генерации кодов ГУ Soueast S07 awd.
 
 ## Скачать
 
-**[Скачать soueast_adb_code_v1.4.apk](https://github.com/sergkursk-lgtm/s07-radio-code-android/releases/download/v1.4/soueast_adb_code_v1.4.apk)** (v1.4)
+**[Скачать soueast_adb_code_v1.5.apk](https://github.com/sergkursk-lgtm/s07-radio-code-android/releases/download/v1.5/soueast_adb_code_v1.5.apk)** (v1.5)
 
 ## Возможности
 

@@ -4,13 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -25,12 +31,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             S07RadioCodeTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = DarkBackground
-                ) {
-                    S07CodeScreen()
-                }
+                S07CodeScreen()
             }
         }
     }
@@ -70,123 +71,172 @@ fun S07CodeScreen() {
     val minutesLeft = secondsLeft / 60
     val secsLeft = secondsLeft % 60
 
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+
+    val titleFontSize = if (isLandscape) 18.sp else 22.sp
+    val codeFontSize = if (isLandscape) 36.sp else 48.sp
+    val timerFontSize = if (isLandscape) 22.sp else 28.sp
+    val horizontalPadding = if (isLandscape) 16.dp else 20.dp
+    val cardPadding = if (isLandscape) 16.dp else 28.dp
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBackground)
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
+            .background(Color(0xFFF5F7FA))
     ) {
-        Card(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 420.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = CardBackground),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                .fillMaxSize()
+                .padding(horizontalPadding)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                modifier = Modifier.padding(28.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .widthIn(max = 400.dp),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
-                Text(
-                    text = "Код Soueast S07 awd",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
+                Column(
+                    modifier = Modifier.padding(cardPadding),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Код Soueast S07 awd",
+                        fontSize = titleFontSize,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A237E)
+                    )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                Text(
-                    text = "КОД ДЛЯ МАГНИТОЛЫ",
-                    fontSize = 13.sp,
-                    color = SubText,
-                    letterSpacing = 0.08.sp
-                )
+                    Text(
+                        text = "КОД ДЛЯ ГУ",
+                        fontSize = 12.sp,
+                        color = Color(0xFF78909C),
+                        letterSpacing = 1.sp
+                    )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                InstructionBlock()
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, Color(0xFFE8EDF2), RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFB))
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = code,
+                                fontSize = codeFontSize,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 6.sp,
+                                color = GreenCode,
+                                fontFamily = FontFamily.Monospace,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = code,
-                    fontSize = 52.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 8.sp,
-                    color = GreenCode,
-                    fontFamily = FontFamily.Monospace,
-                    textAlign = TextAlign.Center
-                )
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, Color(0xFFE8EDF2), RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFB))
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "КОДУ ОСТАЛОСЬ ЖИТЬ",
+                                fontSize = 11.sp,
+                                color = Color(0xFF78909C),
+                                letterSpacing = 1.sp
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = String.format("%02d:%02d", minutesLeft, secsLeft),
+                                fontSize = timerFontSize,
+                                color = YellowTimer,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = "КОДУ ОСТАЛОСЬ ЖИТЬ",
-                    fontSize = 13.sp,
-                    color = SubText,
-                    letterSpacing = 0.08.sp
-                )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = String.format("%02d:%02d", minutesLeft, secsLeft),
-                    fontSize = 28.sp,
-                    color = YellowTimer,
-                    fontFamily = FontFamily.Monospace
-                )
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, GreenCode.copy(alpha = 0.3f), RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0FAF8))
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Text(
+                                text = "Как попасть в меню ADB:",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF1A237E)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            InstructionStep("1", "Откройте звонилку")
+                            InstructionStep("2", "Наберите *#20230730#*")
+                            InstructionStep("3", "Выберите предпоследний пункт")
+                            InstructionStep("4", "Введите код")
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun InstructionBlock() {
-    Card(
+fun InstructionStep(number: String, text: String) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = InstructionBg),
-        border = CardDefaults.outlinedCardBorder()
+            .padding(vertical = 3.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp)
+        Box(
+            modifier = Modifier
+                .size(20.dp)
+                .clip(CircleShape)
+                .background(GreenCode.copy(alpha = 0.15f)),
+            contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Как попасть в меню ADB:",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = YellowTimer
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "1. Откройте звонилку",
-                fontSize = 12.sp,
-                color = SubText,
-                lineHeight = 18.sp
-            )
-            Text(
-                text = "2. Наберите *#20230730#*",
-                fontSize = 12.sp,
-                color = SubText,
-                lineHeight = 18.sp
-            )
-            Text(
-                text = "3. Выберите предпоследний пункт",
-                fontSize = 12.sp,
-                color = SubText,
-                lineHeight = 18.sp
-            )
-            Text(
-                text = "4. Введите код",
-                fontSize = 12.sp,
-                color = SubText,
-                lineHeight = 18.sp
+                text = number,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = GreenCode
             )
         }
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = text,
+            fontSize = 13.sp,
+            color = Color(0xFF37474F),
+            lineHeight = 18.sp
+        )
     }
 }
