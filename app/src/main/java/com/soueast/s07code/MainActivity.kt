@@ -54,6 +54,7 @@ fun S07CodeScreen() {
     var currentMonth by remember { mutableIntStateOf(calendar.get(Calendar.MONTH) + 1) }
     var currentDay by remember { mutableIntStateOf(calendar.get(Calendar.DAY_OF_MONTH)) }
     var currentHour by remember { mutableIntStateOf(calendar.get(Calendar.HOUR_OF_DAY)) }
+    var currentYear by remember { mutableIntStateOf(calendar.get(Calendar.YEAR)) }
     var secondsLeft by remember { mutableIntStateOf(0) }
 
     // Manual input state
@@ -69,10 +70,11 @@ fun S07CodeScreen() {
             currentMonth = now.get(Calendar.MONTH) + 1
             currentDay = now.get(Calendar.DAY_OF_MONTH)
             currentHour = now.get(Calendar.HOUR_OF_DAY)
+            currentYear = now.get(Calendar.YEAR)
 
             val minutes = now.get(Calendar.MINUTE)
             val seconds = now.get(Calendar.SECOND)
-            secondsLeft = 3600 - (minutes * 60 + seconds)
+            secondsLeft = (3600 - (minutes * 60 + seconds)).coerceAtLeast(0)
 
             delay(1000L)
         }
@@ -82,11 +84,13 @@ fun S07CodeScreen() {
     val minutesLeft = secondsLeft / 60
     val secsLeft = secondsLeft % 60
 
-    val months = listOf(
-        "января", "февраля", "марта", "апреля", "мая", "июня",
-        "июля", "августа", "сентября", "октября", "ноября", "декабря"
-    )
-    val dateText = "${currentDay} ${months[currentMonth - 1]} ${calendar.get(Calendar.YEAR)}"
+    // Reset manual code when hour changes
+    LaunchedEffect(currentHour) {
+        manualCode = ""
+        inputMonth = ""
+        inputDay = ""
+        inputHour = ""
+    }
 
     Box(
         modifier = Modifier
@@ -216,7 +220,8 @@ fun S07CodeScreen() {
                         val m = inputMonth.toIntOrNull()
                         val d = inputDay.toIntOrNull()
                         val h = inputHour.toIntOrNull()
-                        if (m != null && d != null && h != null) {
+                        if (m != null && d != null && h != null &&
+                            m in 1..12 && d in 1..31 && h in 0..23) {
                             manualCode = generateCode(m, d, h)
                         } else {
                             manualCode = "— введи ММ ДД ЧЧ —"

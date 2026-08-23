@@ -4,7 +4,7 @@ Android-приложение для генерации кодов магнито
 
 ## Скачать
 
-**[Скачать soueast_adb_code.apk](https://github.com/sergkursk-lgtm/s07-radio-code-android/releases/download/v1.0/soueast_adb_code.apk)** (v1.0)
+**[Скачать soueast_adb_code_v1.1.apk](https://github.com/sergkursk-lgtm/s07-radio-code-android/releases/download/v1.1/soueast_adb_code_v1.1.apk)** (v1.1)
 
 ## Возможности
 
@@ -25,19 +25,6 @@ Android-приложение для генерации кодов магнито
 1. Скачайте APK-файл
 2. На устройстве разрешите установку из неизвестных источников
 3. Установите приложение
-
-## Сборка из исходников
-
-```bash
-# Установите JDK 17 и Android SDK
-export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
-export ANDROID_HOME=/opt/homebrew/share/android-commandlinetools
-
-# Соберите APK
-./gradlew assembleRelease
-
-# APK будет в app/build/outputs/apk/release/
-```
 
 ## Технологии
 
