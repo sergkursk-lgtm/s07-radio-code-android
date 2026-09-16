@@ -73,9 +73,17 @@ KEYTOOL_BIN="${JAVA_HOME:+$JAVA_HOME/bin/}keytool"
 JARSIGNER_BIN="${JAVA_HOME:+$JAVA_HOME/bin/}jarsigner"
 command -v "$JAVA_BIN" >/dev/null 2>&1 || { echo "Не найден java. Укажите JAVA_HOME."; exit 1; }
 
-VERSION="$(grep -oE 'versionName = "[^"]+"' app/build.gradle.kts | head -1 | sed -E 's/.*"(.*)"/\1/')"
-VERSION_CODE="$(grep -oE 'versionCode = [0-9]+' app/build.gradle.kts | head -1 | awk '{print $3}')"
-[ -n "$VERSION" ] || { echo "Не смог прочитать versionName из app/build.gradle.kts"; exit 1; }
+# Версию берём из проекта, а если скрипт запущен в папке-комплекте (без проекта) —
+# из имени уже собранного AAB рядом с ним.
+PROJECT_GRADLE="app/build.gradle.kts"
+if [ -f "$PROJECT_GRADLE" ]; then
+    VERSION="$(grep -oE 'versionName = "[^"]+"' "$PROJECT_GRADLE" | head -1 | sed -E 's/.*"(.*)"/\1/')"
+    VERSION_CODE="$(grep -oE 'versionCode = [0-9]+' "$PROJECT_GRADLE" | head -1 | awk '{print $3}')"
+else
+    VERSION="$(ls "$READY_DIR"/soueast_adb_code_v*.aab 2>/dev/null | head -1 | sed -E 's|.*_v([0-9][0-9.]*)\.aab|\1|')"
+    VERSION_CODE=""
+fi
+[ -n "$VERSION" ] || { echo "Не вижу ни app/build.gradle.kts, ни готового AAB в $READY_DIR"; exit 1; }
 AAB_NAME="soueast_adb_code_v${VERSION}.aab"
 
 # --- шаг 1: ключ подписи, зашифрованный ключом RuStore ----------------------
@@ -97,10 +105,15 @@ echo "==> 2/3 Готовлю $RELEASE_CERT_NAME (сертификат ключа
 echo "    готово: $RELEASE_CERT_NAME"
 
 # --- шаг 3: AAB, подписанный ключом загрузки --------------------------------
-echo "==> 3/3 Собираю AAB и подписываю его ключом загрузки"
-./gradlew :app:bundleRelease --console=plain -q
+echo "==> 3/3 Готовлю AAB, подписанный ключом загрузки"
 mkdir -p "$READY_DIR"
-cp "app/build/outputs/bundle/release/app-release.aab" "$READY_DIR/$AAB_NAME"
+if [ -f "$PROJECT_GRADLE" ]; then
+    ./gradlew :app:bundleRelease --console=plain -q
+    cp "app/build/outputs/bundle/release/app-release.aab" "$READY_DIR/$AAB_NAME"
+else
+    echo "    проект рядом не найден — беру уже собранный $READY_DIR/$AAB_NAME и подписываю заново"
+    [ -f "$READY_DIR/$AAB_NAME" ] || { echo "Нет $READY_DIR/$AAB_NAME"; exit 1; }
+fi
 # снимаем подпись ключа подписи приложения: в AAB должна остаться только подпись ключом загрузки
 zip -q -d "$READY_DIR/$AAB_NAME" "META-INF/*.SF" "META-INF/*.RSA" "META-INF/*.DSA" "META-INF/*.EC" 2>/dev/null || true
 "$JARSIGNER_BIN" -keystore "$UPLOAD_STORE" -storepass "$UPLOAD_PASS" \
@@ -115,6 +128,8 @@ unzip -p "$PEPK_OUT" certificate.pem > "$TMPCERT"
 APP_FP="$("$KEYTOOL_BIN" -printcert -file "$TMPCERT" 2>/dev/null | awk '/SHA256:/{print $2}')"
 rm -f "$TMPCERT"
 UPLOAD_FP="$("$KEYTOOL_BIN" -printcert -jarfile "$READY_DIR/$AAB_NAME" 2>/dev/null | awk '/SHA256:/{print $2}')"
+VERSION_INFO="versionName $VERSION"
+if [ -n "$VERSION_CODE" ]; then VERSION_INFO="$VERSION_INFO, versionCode $VERSION_CODE"; fi
 cat <<EOF
 
 Готово. Что загружать в RuStore Консоль:
@@ -123,7 +138,7 @@ cat <<EOF
     подпись приложения .......... $PEPK_OUT
     сертификат ключа загрузки ... $RELEASE_CERT_NAME
   Файл сборки:
-    $READY_DIR/$AAB_NAME   (versionName $VERSION, versionCode ${VERSION_CODE:-?})
+    $READY_DIR/$AAB_NAME   ($VERSION_INFO)
 
 Отпечатки SHA-256 для сверки:
   ключ подписи приложения (внутри $PEPK_OUT): $APP_FP
