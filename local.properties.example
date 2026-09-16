@@ -10,3 +10,10 @@ RELEASE_STORE_FILE=release-key.jks
 RELEASE_STORE_PASSWORD=<пароль хранилища>
 RELEASE_KEY_ALIAS=s07radio
 RELEASE_KEY_PASSWORD=<пароль ключа>
+
+# Ключ загрузки: им подписывается только AAB для RuStore (см. раздел «Публикация в RuStore»
+# в README). Gradle его не использует — реквизиты нужны для команд keytool и jarsigner.
+UPLOAD_STORE_FILE=upload-key.jks
+UPLOAD_STORE_PASSWORD=<пароль хранилища>
+UPLOAD_KEY_ALIAS=upload
+UPLOAD_KEY_PASSWORD=<пароль ключа>

@@ -76,8 +76,46 @@ Android и RuStore требуют один сертификат для всех 
 ~/Library/Android/sdk/build-tools/34.0.0/aapt2 dump badging app/build/outputs/apk/release/app-release.apk | head -1
 # 4. Проверить подпись
 ~/Library/Android/sdk/build-tools/34.0.0/apksigner verify --print-certs app/build/outputs/apk/release/app-release.apk
-# 5. Выложить APK в GitHub-релиз с тегом, равным versionName, AAB — в RuStore
+# 5. Выложить APK в GitHub-релиз с тегом, равным versionName
 ```
+
+## Публикация в RuStore
+
+Приложение распространяется только через RuStore, поэтому в нём нет встроенной проверки обновлений.
+
+Есть два пути, оба дают пользователям одинаковую подпись приложения (`release-key.jks`, `CN=Soueast`):
+
+**1. Загрузить APK (проще).** Берётся `app/build/outputs/apk/release/app-release.apk`, он уже подписан
+ключом подписи приложения. Никаких дополнительных файлов не нужно.
+
+**2. Загрузить AAB (RuStore сам собирает APK под устройства).** В формате AAB магазин требует
+дополнительно загрузить подпись, а сам AAB должен быть подписан отдельным ключом загрузки
+(подробности в [документации RuStore](https://www.rustore.ru/help/developers/publishing-and-verifying-apps/app-publication/new-version-app/upload-aab)):
+
+```sh
+# 1. ZIP с ключом подписи приложения, зашифрованный на ключ из RuStore Консоль
+#    (pepk.jar и строку --encryptionkey выдаёт окно «Загрузка подписи приложения»)
+java -jar pepk.jar --keystore release-key.jks --alias s07radio \
+  --output pepk_out.zip --include-cert --encryptionkey=<из консоли RuStore>
+
+# 2. Сертификат ключа загрузки (upload-key.jks создаётся один раз и хранится рядом с release-key.jks)
+keytool -exportcert -alias upload -keystore upload-key.jks -rfc -file uploadcert.pem
+
+# 3. AAB, подписанный ключом загрузки: снимаем подпись ключа приложения и подписываем upload-ключом
+cp app/build/outputs/bundle/release/app-release.aab app-release-rustore.aab
+zip -d app-release-rustore.aab "META-INF/*.SF" "META-INF/*.RSA"
+jarsigner -keystore upload-key.jks -sigalg SHA256withRSA -digestalg SHA-256 \
+  app-release-rustore.aab upload
+jarsigner -verify app-release-rustore.aab        # должно быть «jar verified.»
+```
+
+Затем в RuStore Консоль: `pepk_out.zip` и `uploadcert.pem` — в окне «Загрузка подписи приложения»,
+`app-release-rustore.aab` — как файл сборки. Требование RuStore к ключу подписи — RSA не меньше 2048 бит;
+оба ключа этому соответствуют.
+
+**Ключи:** `release-key.jks` (подпись приложения — менять нельзя никогда) и `upload-key.jks`
+(подпись AAB — перевыпускается через поддержку RuStore, если потеряется). Оба лежат локально,
+в git не попадают, резервная копия — в iCloud.
 
 ## Технологии
 
