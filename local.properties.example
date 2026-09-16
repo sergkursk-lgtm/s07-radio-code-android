@@ -1,0 +1,12 @@
+# Пример local.properties. Настоящий файл local.properties в репозиторий не попадает.
+#
+# sdk.dir нужен Android Gradle Plugin для сборки.
+sdk.dir=/Users/<user>/Library/Android/sdk
+
+# Реквизиты ключа подписи release-сборки.
+# Если RELEASE_STORE_FILE не существует, release-сборка будет неподписанной:
+# это видно командой apksigner verify, и такой APK никуда не публикуется.
+RELEASE_STORE_FILE=release-key.jks
+RELEASE_STORE_PASSWORD=<пароль хранилища>
+RELEASE_KEY_ALIAS=s07radio
+RELEASE_KEY_PASSWORD=<пароль ключа>

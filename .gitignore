@@ -10,3 +10,6 @@
 local.properties
 /app/build
 /release-key.jks
+# сеть безопасности: приватные ключи подписи в репозиторий не попадают
+*.jks
+*.keystore

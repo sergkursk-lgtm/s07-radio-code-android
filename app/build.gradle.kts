@@ -1,7 +1,22 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
+
+// Реквизиты подписи лежат в local.properties: файл перечислен в .gitignore,
+// поэтому ключ и пароли не попадают в публичный репозиторий.
+// Без них release-сборка получается неподписанной — это видно в apksigner.
+val signingProps = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+val releaseStoreFile = signingProps.getProperty("RELEASE_STORE_FILE")
+val releaseStorePassword = signingProps.getProperty("RELEASE_STORE_PASSWORD")
+val releaseKeyAlias = signingProps.getProperty("RELEASE_KEY_ALIAS")
+val releaseKeyPassword = signingProps.getProperty("RELEASE_KEY_PASSWORD") ?: releaseStorePassword
+val releaseKeyFile = releaseStoreFile?.let { rootProject.file(it) }
 
 android {
     namespace = "com.soueast.s07code"
@@ -11,23 +26,25 @@ android {
         applicationId = "com.soueast.s07code"
         minSdk = 26
         targetSdk = 34
-        versionCode = 8
+        versionCode = 9
         versionName = "1.9"
     }
 
     signingConfigs {
-        create("release") {
-            storeFile = file("../release-key.jks")
-            storePassword = "soueast123"
-            keyAlias = "s07radio"
-            keyPassword = "soueast123"
+        if (releaseKeyFile?.exists() == true && releaseStorePassword != null) {
+            create("release") {
+                storeFile = releaseKeyFile
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias ?: "s07radio"
+                keyPassword = releaseKeyPassword
+            }
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.findByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -66,4 +83,5 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    testImplementation("junit:junit:4.13.2")
 }
